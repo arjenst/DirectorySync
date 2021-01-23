@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectorySync", "DirectorySync\DirectorySync.csproj", "{FE2E3D63-A017-4886-8C88-24D6185427C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectorySync.Tests", "DirectorySync.Tests\DirectorySync.Tests.csproj", "{34ED2D11-9384-489B-8B5D-A8C4B534ACDB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE2E3D63-A017-4886-8C88-24D6185427C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE2E3D63-A017-4886-8C88-24D6185427C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE2E3D63-A017-4886-8C88-24D6185427C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE2E3D63-A017-4886-8C88-24D6185427C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34ED2D11-9384-489B-8B5D-A8C4B534ACDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34ED2D11-9384-489B-8B5D-A8C4B534ACDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34ED2D11-9384-489B-8B5D-A8C4B534ACDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34ED2D11-9384-489B-8B5D-A8C4B534ACDB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {25E38392-C36E-49AC-8700-FC5ADE76B687}
+	EndGlobalSection
+EndGlobal
