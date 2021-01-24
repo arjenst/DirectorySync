@@ -3,27 +3,28 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
+using DirectorySync.Configuration;
 using Newtonsoft.Json.Linq;
 
 namespace DirectorySync
 {
     public class Utilities
     {
-        public List<Configuration> ReadConfig()
+        public List<ConfigurationObject> ReadConfiguration()
         {
-            Log("Reading the configuration");
-            List<Configuration> configuration = new List<Configuration>();
-            string folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + @"\Configuration.json";
-            JObject configurationFile = JObject.Parse(File.ReadAllText(folder));
+            Log("Reading the configuration via App.config");
+            List<ConfigurationObject> configuration = new List<ConfigurationObject>();
 
-            foreach (var item in configurationFile["directories"])
+            var config = (DirectorySyncConfig)ConfigurationManager.GetSection("directorySync");
+
+            foreach (DirectorySyncInstanceElement instance in config.DirectorySyncInstances)
             {
-                Log((string)item["name"]);
-                configuration.Add(new Configuration
+                Log(instance.Name);
+                configuration.Add(new ConfigurationObject
                 {
-                    Name = (string)item["name"],
-                    Source = (string)item["source"],
-                    Destination = (string)item["destination"]
+                    Name = instance.Name,
+                    Source = instance.Source,
+                    Destination = instance.Destination
                 });
             }
 

@@ -1,6 +1,6 @@
 ﻿namespace DirectorySync
 {
-    public class Configuration
+    public class ConfigurationObject
     {
         public string Name { get; set; }
         public string Source { get; set; }

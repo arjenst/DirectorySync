@@ -4,15 +4,16 @@ using System.IO;
 using System.Linq;
 using System.ServiceProcess;
 using System.Timers;
+using System.Threading;
 
 namespace DirectorySync
 {
     public partial class Service : ServiceBase
     {
-        List<Configuration> _configuration = new List<Configuration>();
-        Timer _timer = new Timer();
+        List<ConfigurationObject> _configuration = new List<ConfigurationObject>();
+        System.Timers.Timer _timer = new System.Timers.Timer();
         private readonly Utilities _util = new Utilities();
-        private static object _intervalSync = new object();
+        private static readonly object _intervalSync = new object();
 
         public Service()
         {
@@ -21,8 +22,8 @@ namespace DirectorySync
 
         protected override void OnStart(string[] args)
         {
-            _util.Log("Service is started at " + DateTime.Now);
-            _configuration = _util.ReadConfig();
+            _util.Log("Service is started");
+            _configuration = _util.ReadConfiguration();
 
             _timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
             _timer.Interval = 5000;
@@ -31,13 +32,13 @@ namespace DirectorySync
 
         protected override void OnStop()
         {
-            _util.Log("Service is stopped at " + DateTime.Now);
+            _util.Log("Service is stopped");
         }
 
         private void OnElapsedTime(object source, ElapsedEventArgs e)
         {
-            _util.Log("Service is recall at " + DateTime.Now);
-            if (System.Threading.Monitor.TryEnter(_intervalSync))
+            _util.Log("Service is recalled");
+            if (Monitor.TryEnter(_intervalSync))
             {
                 try
                 {
@@ -45,8 +46,7 @@ namespace DirectorySync
                 }
                 finally
                 {
-                    // Make sure Exit is always called
-                    System.Threading.Monitor.Exit(_intervalSync);
+                    Monitor.Exit(_intervalSync);
                 }
             }
             else
@@ -83,7 +83,7 @@ namespace DirectorySync
                     var relativeFilePath = file.Replace(item.Source, "");
                     var destinationFilePath = string.Format("{0}{1}", item.Destination, relativeFilePath);
                     _util.Log(string.Format("file: {0}", file));
-                    _util.Log(string.Format("destinationFilePath: {0}", destinationFilePath));
+                    _util.Log(string.Format("dest: {0}", destinationFilePath));
 
                     if (!File.Exists(destinationFilePath) || _util.IsFileNew(file, destinationFilePath))
                     {
@@ -95,7 +95,7 @@ namespace DirectorySync
             }
         }
 
-        private bool VerifyDirectories(Configuration item)
+        private bool VerifyDirectories(ConfigurationObject item)
         {
             _util.Log("Verifying directories:");
 
