@@ -5,6 +5,7 @@ using System.Linq;
 using System.ServiceProcess;
 using System.Timers;
 using System.Threading;
+using System.Configuration;
 
 namespace DirectorySync
 {
@@ -24,9 +25,14 @@ namespace DirectorySync
         {
             _util.Log("Service is started");
             _configuration = _util.ReadConfiguration();
+            string threadInterval = ConfigurationManager.AppSettings["ThreadInterval"];
+            if (!int.TryParse(threadInterval, out int interval))
+            {
+                interval = 5000;
+            }
 
             _timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
-            _timer.Interval = 5000;
+            _timer.Interval = interval;
             _timer.Enabled = true;
         }
 
