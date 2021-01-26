@@ -15,8 +15,33 @@ namespace DirectorySync
         System.Timers.Timer _timer = new System.Timers.Timer();
         private readonly Utilities _util = new Utilities();
         private static readonly object _intervalSync = new object();
-        private static readonly int _threadInterval = int.Parse(ConfigurationManager.AppSettings["ThreadInterval"]);
-        private static readonly int _maxRetries = int.Parse(ConfigurationManager.AppSettings["MaxRetries"]);
+
+        private static int _threadInterval
+        {
+            get
+            {
+                int n;
+                if (!int.TryParse(ConfigurationManager.AppSettings["ThreadInterval"], out n))
+                {
+                    n = 5000;
+                }
+                return n;
+            }
+        }
+
+        private static int _maxRetries
+        {
+            get
+            {
+                int n;
+                if (!int.TryParse(ConfigurationManager.AppSettings["MaxRetries"], out n))
+                {
+                    n = 60;
+                }
+                return n;
+            }
+        }
+
         public Service()
         {
             InitializeComponent();
