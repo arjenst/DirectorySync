@@ -35,7 +35,7 @@ namespace DirectorySync
         {
             DateTime sourceDateTime = File.GetLastWriteTime(source);
             DateTime destinationDateTime = File.GetLastWriteTime(destination);
-            return sourceDateTime != destinationDateTime && sourceDateTime > destinationDateTime;
+            return sourceDateTime > destinationDateTime;
         }
 
         public void Log(string message)
