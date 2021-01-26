@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
 using System.IO;
 using DirectorySync.Configuration;
-using Newtonsoft.Json.Linq;
 
 namespace DirectorySync
 {
     public class Utilities
     {
+        private static readonly bool _enableLogging = ConfigurationManager.AppSettings["EnableLogging"] == "true";
+
         public List<ConfigurationObject> ReadConfiguration()
         {
             Log("Reading the configuration via App.config");
@@ -40,7 +40,7 @@ namespace DirectorySync
 
         public void Log(string message)
         {
-            if (ConfigurationManager.AppSettings["EnableLogging"] != "true")
+            if (!_enableLogging)
                 return;
 
             string path = AppDomain.CurrentDomain.BaseDirectory + "\\Logs";

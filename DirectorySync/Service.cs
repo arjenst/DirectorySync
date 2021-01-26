@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.ServiceProcess;
 using System.Timers;
 using System.Threading;
 using System.Configuration;
+using System;
 
 namespace DirectorySync
 {
@@ -15,7 +15,8 @@ namespace DirectorySync
         System.Timers.Timer _timer = new System.Timers.Timer();
         private readonly Utilities _util = new Utilities();
         private static readonly object _intervalSync = new object();
-
+        private static readonly int _threadInterval = int.Parse(ConfigurationManager.AppSettings["ThreadInterval"]);
+        private static readonly int _maxRetries = int.Parse(ConfigurationManager.AppSettings["MaxRetries"]);
         public Service()
         {
             InitializeComponent();
@@ -25,14 +26,8 @@ namespace DirectorySync
         {
             _util.Log("Service is started");
             _configuration = _util.ReadConfiguration();
-            string threadInterval = ConfigurationManager.AppSettings["ThreadInterval"];
-            if (!int.TryParse(threadInterval, out int interval))
-            {
-                interval = 5000;
-            }
-
             _timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
-            _timer.Interval = interval;
+            _timer.Interval = _threadInterval;
             _timer.Enabled = true;
         }
 
@@ -61,6 +56,22 @@ namespace DirectorySync
             }
         }
 
+        private void StopService()
+        {
+            ServiceController service = new ServiceController("DirectorySync");
+            try
+            {
+                TimeSpan timeout = TimeSpan.FromMilliseconds(10000);
+
+                service.Stop();
+                service.WaitForStatus(ServiceControllerStatus.Stopped, timeout);
+            }
+            catch
+            {
+                _util.Log("Unable to stop the service");
+            }
+        }
+
         public void SyncDirectories()
         {
             _util.Log("Synchronizing directories");
@@ -68,6 +79,7 @@ namespace DirectorySync
             if (_configuration.Count() == 0)
             {
                 _util.Log("No directories found to process");
+                StopService();
             }
 
             foreach (var item in _configuration)
@@ -75,9 +87,11 @@ namespace DirectorySync
                 _util.Log(item.Name);
                 _util.Log(string.Format("Source: {0}", item.Source));
                 _util.Log(string.Format("Destination: {0}", item.Destination));
+                _util.Log(string.Format("UnavailableCount: {0}", item.UnavailableCount));
 
                 if (!VerifyDirectories(item))
                 {
+                    item.UnavailableCount++;
                     break;
                 }
 
@@ -108,8 +122,14 @@ namespace DirectorySync
             _util.Log(item.Source);
             if (!Directory.Exists(item.Source))
             {
-                _util.Log("Not found, skipping this item");
-                _configuration.Remove(item);
+                _util.Log("Not found");
+                if (item.UnavailableCount >= _maxRetries)
+                {
+                    _util.Log("Removing item. Restart service to retry again!");
+                    item = _configuration.First(a => a.Name == item.Name);
+                    _configuration.Remove(item);
+
+                }
                 return false;
             }
 
