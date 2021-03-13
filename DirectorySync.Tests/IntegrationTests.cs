@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.IO;
 using System.ServiceProcess;
 
 namespace DirectorySync.Tests
@@ -12,6 +11,7 @@ namespace DirectorySync.Tests
         private int _timeoutMilliseconds = 1000;
         private ServiceController _service = new ServiceController(_serviceName);
 
+        [Ignore]
         [TestMethod]
         public void Restart_Service()
         {

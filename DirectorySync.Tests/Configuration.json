@@ -1,9 +1,0 @@
-{
-  "directories": [
-    {
-      "name": "iris-client",
-      "source": "C:\\Sources\\iris-client\\dist",
-      "destination": "C:\\Sources\\iris-4\\Client\\v2\\iris-client"
-    }
-  ]
-}

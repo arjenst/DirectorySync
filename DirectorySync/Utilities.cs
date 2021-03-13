@@ -1,13 +1,14 @@
-﻿using System;
+﻿using DirectorySync.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using DirectorySync.Configuration;
 
 namespace DirectorySync
 {
     public class Utilities
     {
+        private static readonly bool _enableNotifications = ConfigurationManager.AppSettings["EnableNotifications"] == "true";
         private static readonly bool _enableLogging = ConfigurationManager.AppSettings["EnableLogging"] == "true";
 
         public List<ConfigurationObject> ReadConfiguration()
@@ -16,6 +17,9 @@ namespace DirectorySync
             List<ConfigurationObject> configuration = new List<ConfigurationObject>();
 
             var config = (DirectorySyncConfig)ConfigurationManager.GetSection("directorySync");
+
+            if (config == null)
+                return new List<ConfigurationObject>();
 
             foreach (DirectorySyncInstanceElement instance in config.DirectorySyncInstances)
             {
@@ -36,6 +40,12 @@ namespace DirectorySync
             DateTime sourceDateTime = File.GetLastWriteTime(source);
             DateTime destinationDateTime = File.GetLastWriteTime(destination);
             return sourceDateTime > destinationDateTime;
+        }
+
+        public void ShowNotification()
+        {
+            if (!_enableNotifications)
+                return;
         }
 
         public void Log(string message)

@@ -29,19 +29,6 @@ namespace DirectorySync
             }
         }
 
-        private static int _maxRetries
-        {
-            get
-            {
-                int n;
-                if (!int.TryParse(ConfigurationManager.AppSettings["MaxRetries"], out n))
-                {
-                    n = 60;
-                }
-                return n;
-            }
-        }
-
         public Service()
         {
             InitializeComponent();
@@ -109,6 +96,7 @@ namespace DirectorySync
 
             foreach (var item in _configuration)
             {
+                bool updatedDirectory = false;
                 _util.Log(item.Name);
                 _util.Log(string.Format("Source: {0}", item.Source));
                 _util.Log(string.Format("Destination: {0}", item.Destination));
@@ -122,6 +110,7 @@ namespace DirectorySync
 
                 string[] files = Directory.GetFiles(item.Source, "*.*", SearchOption.AllDirectories);
                 _util.Log(string.Format("Found {0} files in {1}", files.Length, item.Source));
+                int numberOfFiles = 0;
 
                 foreach (string file in files)
                 {
@@ -132,10 +121,18 @@ namespace DirectorySync
 
                     if (!File.Exists(destinationFilePath) || _util.IsFileNew(file, destinationFilePath))
                     {
-                        _util.Log("Moving file");
+                        _util.Log("Copying file");
                         new FileInfo(destinationFilePath).Directory.Create();
                         File.Copy(file, destinationFilePath, true);
+                        updatedDirectory = true;
+                        numberOfFiles++;
                     }
+                }
+
+                if (updatedDirectory)
+                {
+                    string message = string.Format("{0} files updated in {1}", numberOfFiles, item.Name);
+                    _util.ShowNotification();
                 }
             }
         }
@@ -148,13 +145,6 @@ namespace DirectorySync
             if (!Directory.Exists(item.Source))
             {
                 _util.Log("Not found");
-                if (item.UnavailableCount >= _maxRetries)
-                {
-                    _util.Log("Removing item. Restart service to retry again!");
-                    item = _configuration.First(a => a.Name == item.Name);
-                    _configuration.Remove(item);
-
-                }
                 return false;
             }
 

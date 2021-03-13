@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("DirectorySync")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Simple service for Windows that synchronizes the content of configured directories.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Arjen Stortelder")]
 [assembly: AssemblyProduct("DirectorySync")]
 [assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
