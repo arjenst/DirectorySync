@@ -1,4 +1,4 @@
-﻿New-Service -Name "YourServiceName" -BinaryPathName <yourproject>.exe# DirectorySync
+﻿# DirectorySync
 
 Simple service for Windows that synchronizes the content of configured directories.
 
